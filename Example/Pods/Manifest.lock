@@ -1,0 +1,53 @@
+PODS:
+  - AFNetworking (2.5.4):
+    - AFNetworking/NSURLConnection (= 2.5.4)
+    - AFNetworking/NSURLSession (= 2.5.4)
+    - AFNetworking/Reachability (= 2.5.4)
+    - AFNetworking/Security (= 2.5.4)
+    - AFNetworking/Serialization (= 2.5.4)
+    - AFNetworking/UIKit (= 2.5.4)
+  - AFNetworking/NSURLConnection (2.5.4):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/NSURLSession (2.5.4):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (2.5.4)
+  - AFNetworking/Security (2.5.4)
+  - AFNetworking/Serialization (2.5.4)
+  - AFNetworking/UIKit (2.5.4):
+    - AFNetworking/NSURLConnection
+    - AFNetworking/NSURLSession
+  - FileMD5Hash (2.0.0)
+  - greedpatch-ios (0.1.0):
+    - AFNetworking
+    - FileMD5Hash
+    - JSPatch
+    - JSPatch/Extensions
+    - ZipArchive
+  - JSPatch (1.1):
+    - JSPatch/Core (= 1.1)
+  - JSPatch/Core (1.1)
+  - JSPatch/Extensions (1.1):
+    - JSPatch/Core
+  - ZipArchive (1.4.0)
+
+DEPENDENCIES:
+  - greedpatch-ios (from `../`)
+
+EXTERNAL SOURCES:
+  greedpatch-ios:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  AFNetworking: 05edc0ac4c4c8cf57bcf4b84be5b0744b6d8e71e
+  FileMD5Hash: 3ed69cc19a21ff4d30ae8833fc104275ad2c7de0
+  greedpatch-ios: a1254621ffcc2e5360d8f1f7b5bc08832af0e7c4
+  JSPatch: ade285ad1d8f06146ed6054a39cef87509453299
+  ZipArchive: e25a4373192673e3229ac8d6e9f64a3e5713c966
+
+PODFILE CHECKSUM: 9cb7b89446c0f22bb5dc39834643fc13bd2e21d2
+
+COCOAPODS: 1.0.1

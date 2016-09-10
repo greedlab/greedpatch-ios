@@ -1,0 +1,1 @@
+../../../JSPatch/Extensions/JPCFunctionBinder/CoreGraphics/JPCGBitmapContext.h

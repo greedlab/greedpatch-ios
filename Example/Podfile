@@ -1,0 +1,12 @@
+source 'https://github.com/CocoaPods/Specs.git'
+#use_frameworks!
+
+target 'greedpatch-ios_Example' do
+  pod 'greedpatch-ios', :path => '../'
+end
+
+target 'greedpatch-ios_Tests' do
+  pod 'greedpatch-ios', :path => '../'
+
+  
+end
