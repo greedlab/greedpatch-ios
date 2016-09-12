@@ -10,24 +10,39 @@
 
 @interface GRPPatchManager : NSObject
 
+#pragma mark - setter
+
 /**
  *  project ID.
+ *
  *  default: null.
+ *
  *  must set before requestPatch and patch.
  */
 @property (nonatomic, strong, nonnull) NSString *projectId;
 
 /**
  *  the address of the hot patch server.
- *  default: http://patchapi.greedlab.com/.
+ *
+ *  default: http://patchapi.greedlab.com.
  */
 @property (nonatomic, strong, nonnull) NSString *serverAddress;
 
 /**
+ *  Verify the user, get this from http://patch.greedlab.com/settings/my/tokens
+ *
+ *  default: null
+ */
+@property (nonatomic, strong, nonnull) NSString *token;
+
+/**
  *  compress and archive password.
+ *
  *  default: null.
  */
 @property (nonatomic, strong, nullable) NSString *compressPassword;
+
+#pragma mark - readonly
 
 /**
  *  the project version of the last patch
@@ -36,8 +51,10 @@
 
 /**
  *  the version of the last patch
+ *
+ *  default: 0, no patch
  */
-@property (nonatomic, strong, nullable, readonly) NSString *patchVersion;
+@property (nonatomic, assign, readonly) NSInteger patchVersion;
 
 + (nonnull GRPPatchManager *)sharedInstance;
 

@@ -7,12 +7,39 @@
 //
 
 #import "GRPAppDelegate.h"
+#import "GRPPatchManager.h"
 #import "GRPViewController.h"
 
 @implementation GRPAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    // config greedpatch
+    [[GRPPatchManager sharedInstance] setProjectId:@"57d61489f0068561dce9baee"];
+    [[GRPPatchManager sharedInstance] setToken:@"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE0NzM2NDg2MzA0ODgsImlkIjoiNTdkM2JmMmY5MDE1ZWU0N2ZjYzNjYWJhIiwic2NvcGUiOiJwYXRjaDpjaGVjayJ9.YPedieEibUgLecWDmuIVIdkY_Ra-4Qa2HeIQpE7Z_k8"];
+    [[GRPPatchManager sharedInstance] setCompressPassword:@"compress_password"];
+    
+    /**
+     *  0: release
+     *
+     *  1: test
+     *
+     *  2: compress
+     */
+    NSInteger env = 0;
+    
+    if (env == 1) { // test local patch
+        [[GRPPatchManager sharedInstance] testPatch];
+    } else if (env == 2) { // compress patch
+        [[GRPPatchManager sharedInstance] compressPatch];
+    } else {
+        // patch
+        [[GRPPatchManager sharedInstance] patch];
+        
+        // check need patch
+        [[GRPPatchManager sharedInstance] requestPatch];
+    }
+    
     // Override point for customization after application launch.
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];

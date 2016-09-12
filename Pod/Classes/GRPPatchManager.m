@@ -7,22 +7,16 @@
 //
 
 #import "GRPPatchManager.h"
-
+#import <AFNetworking/AFNetworking.h>
 #import "FileHash.h"
 #import "JPEngine.h"
 #import "ZipArchive.h"
 
 @interface GRPPatchManager ()
 
-/**
- *  the project version of the last patch
- */
 @property (nonatomic, strong, nonnull) NSString *projectVersion;
 
-/**
- *  the version of the last patch
- */
-@property (nonatomic, strong, nullable) NSString *patchVersion;
+@property (nonatomic, assign) NSInteger patchVersion;
 
 @end
 
@@ -32,7 +26,8 @@
     self = [super init];
     if (self) {
         _projectVersion = [[NSUserDefaults standardUserDefaults] stringForKey:@"projectVersion"];
-        _patchVersion = [[NSUserDefaults standardUserDefaults] stringForKey:@"patchVersion"];
+        _patchVersion = [[NSUserDefaults standardUserDefaults] integerForKey:@"patchVersion"];
+        _serverAddress = @"http://patchapi.greedlab.com";
     }
     return self;
 }
@@ -48,12 +43,54 @@
 }
 
 - (void)requestPatch {
+    if (!_projectId) {
+        NSLog(@"projectId can not be null");
+        return;
+    }
+    if (!_serverAddress) {
+        NSLog(@"serverAddress can not be null");
+        return;
+    }
+    if (!_token) {
+        NSLog(@"token can not be null");
+        return;
+    }
+    
+    // url
+    NSString *url = [_serverAddress stringByAppendingString:@"/patches/check"];
+    
+    // parameters
     NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
     NSString *currentBundleVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
     [parameters setObject:currentBundleVersion forKey:@"project_version"];
-    if (self.projectVersion && [self.projectVersion isEqualToString:currentBundleVersion]) {
-        [parameters setObject:self.patchVersion forKey:@"patch_version"];
+    if (_projectVersion && [_projectVersion isEqualToString:currentBundleVersion]) {
+        [parameters setObject:[NSNumber numberWithInteger:_patchVersion] forKey:@"patch_version"];
     }
+    [parameters setObject:_projectId forKey:@"project_id"];
+    
+    // header
+    AFHTTPRequestSerializer *requestSerializer = [AFJSONRequestSerializer serializer];
+    [requestSerializer setValue:[@"Bearer " stringByAppendingString:_token] forHTTPHeaderField:@"Authorization"];
+    [requestSerializer setValue:@"application/vnd.greedlab+json;version=1.0" forHTTPHeaderField:@"Accept"];
+    [requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    
+    NSMutableURLRequest *mutableRequest = [requestSerializer requestWithMethod:@"POST" URLString:url parameters:parameters error:nil];
+    [[[AFHTTPSessionManager manager] dataTaskWithRequest:mutableRequest completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
+        if (error) {
+            NSLog(@"%@",error);
+            NSLog(@"%@",responseObject);
+        } else {
+            if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                NSString *hash = [responseObject objectForKey:@"hash"];
+                NSString *project_version = [responseObject objectForKey:@"project_version"];
+                NSInteger patch_version = [[responseObject objectForKey:@"patch_version"] integerValue];
+                NSString *patch_url = [responseObject objectForKey:@"patch_url"];
+                [self patchWithProjectVewsion:project_version patchVewsion:patch_version patchUrl:patch_url hash:hash];
+            } else {
+                NSLog(@"no need to patch");
+            }
+        }
+    }] resume];
 }
 
 - (void)patch {
@@ -74,7 +111,6 @@
     }];
 }
 
-
 - (void)compressPatch {
     NSArray *array = [[NSBundle mainBundle] pathsForResourcesOfType:@"js" inDirectory:@"/"];
     if (array.count <= 1) {
@@ -89,9 +125,10 @@
     [[NSFileManager defaultManager] createDirectoryAtPath:zipDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
     
     ZipArchive *zip = [[ZipArchive alloc] init];
-    if (![zip CreateZipFile2:zipPath]) {
+    if (![zip CreateZipFile2:zipPath Password:_compressPassword]) {
         return;
     }
+    
     [array enumerateObjectsUsingBlock:^(id _Nonnull obj, NSUInteger idx, BOOL *_Nonnull stop) {
         NSString *path = obj;
         NSString *fileName = [path lastPathComponent];
@@ -113,115 +150,53 @@
     }
 }
 
-#pragma mark - file path
-
-/**
- *  get document directory
- *
- *  @return document directory
- */
-- (NSString *)documentDirectory {
-    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
-}
-
-/**
- *  打包的patch js位置
- *
- *  @return documentDirectory/patch/compress/js
- */
-- (NSString *)compressJsDirectory {
-    NSString *documentDirectory = [self documentDirectory];
-    NSString *directory = [documentDirectory stringByAppendingPathComponent:@"patch"];
-    directory = [directory stringByAppendingPathComponent:@"compress"];
-    directory = [directory stringByAppendingPathComponent:@"js"];
-    return directory;
-}
-
-/**
- *  打包的patch zip位置
- *
- *  @return documentDirectory/patch/compress/patch.zip
- */
-- (NSString *)compressZipPath {
-    NSString *documentDirectory = [self documentDirectory];
-    NSString *directory = [documentDirectory stringByAppendingPathComponent:@"patch"];
-    directory = [directory stringByAppendingPathComponent:@"compress"];
-    directory = [directory stringByAppendingPathComponent:@"patch.zip"];
-    return directory;
-}
-
-/**
- *  当前版本的patch位置
- *
- *  @return documentDirectory/patch/projectVersion/patchVersion
- */
-- (NSString *)patchDirectoryWithProjectVersion:(NSString *)projectVersion patchVersion:(NSString *)patchVersion {
-    NSString *documentDirectory = [self documentDirectory];
-    NSString *patchDirectory = [documentDirectory stringByAppendingPathComponent:@"patch"];
-    patchDirectory = [patchDirectory stringByAppendingPathComponent:projectVersion];
-    patchDirectory = [patchDirectory stringByAppendingPathComponent:patchVersion];
-    return patchDirectory;
-}
-
-/**
- *  js
- *
- *  @return documentDirectory/patch/projectVersion/patchVersion/js
- */
-- (NSString *)jsDirectoryWithProjectVersion:(NSString *)projectVersion patchVersion:(NSString *)patchVersion {
-    NSString *patchDirectory = [self patchDirectoryWithProjectVersion:projectVersion patchVersion:patchVersion];
-    NSString *luaDirectory = [patchDirectory stringByAppendingPathComponent:@"js"];
-    return luaDirectory;
-}
-
-/**
- *  patch.zip
- *
- *  @return documentDirectory/patch/projectVersion/patchVersion/patch.zip
- */
-- (NSString *)patchZipPathWithProjectVersion:(NSString *)projectVersion patchVersion:(NSString *)patchVersion {
-    NSString *patchDirectory = [self patchDirectoryWithProjectVersion:projectVersion patchVersion:patchVersion];
-    NSString *patchZipPath = [patchDirectory stringByAppendingPathComponent:@"patch.zip"];
-    return patchZipPath;
-}
-
 #pragma mark - private
 
 /**
- *  检测本地是否有补丁需要打
+ *  check whether need to patch
  */
 - (BOOL)checkNeedPatch {
     NSString *currentBundleVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
-    return (_projectVersion && [_projectVersion isEqualToString:currentBundleVersion] && _patchVersion);
+    return (_projectVersion && [_projectVersion isEqualToString:currentBundleVersion] && _patchVersion > 0);
 }
 
 /**
- *  下载，解压，打补丁
- *
- *  @param entity   参数
+ *  download express and patch
  */
-- (void)patchWithProjectVewsion:(NSString *)projectVewsion patchVewsion:(NSString *)patchVewsion patchUrl:(NSString *)patchUrl hash:(NSString *)hash {
+- (void)patchWithProjectVewsion:(NSString *)projectVersion patchVewsion:(NSInteger)patchVersion patchUrl:(NSString *)patchUrl hash:(NSString *)hash {
+    if (!projectVersion) {
+        NSLog(@"projectVersion is null");
+        return;
+    }
+    if (!patchUrl) {
+        NSLog(@"patchUrl is null");
+        return;
+    }
+    if (!hash) {
+        NSLog(@"hash is null");
+        return;
+    }
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSURL *patchUrl = [NSURL URLWithString:patchUrl];
-        NSData *data = [NSURLConnection sendSynchronousRequest:[NSURLRequest requestWithURL:patchUrl] returningResponse:NULL error:NULL];
+        NSData *data = [NSURLConnection sendSynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:patchUrl]] returningResponse:NULL error:NULL];
         if (data) {
-            NSString *patchDirectory = [self patchDirectoryWithProjectVersion:projectVersion patchVersion:patchVersion];
+            NSString *strPatchVersion = [NSString stringWithFormat:@"%@",@(patchVersion)];
+            NSString *patchDirectory = [self patchDirectoryWithProjectVersion:projectVersion patchVersion:strPatchVersion];
             [[NSFileManager defaultManager] removeItemAtPath:patchDirectory error:NULL];
             [[NSFileManager defaultManager] createDirectoryAtPath:patchDirectory withIntermediateDirectories:YES attributes:nil error:NULL];
             
-            NSString *patchZipPath = [self patchZipPathWithProjectVersion:projectVersion patchVersion:patchVersion];
+            NSString *patchZipPath = [self patchZipPathWithProjectVersion:projectVersion patchVersion:strPatchVersion];
             [data writeToFile:patchZipPath atomically:YES];
             
             NSString *hashCode = [FileHash md5HashOfFileAtPath:patchZipPath];
-            if (hashCode && entity.hashCode && [hashCode isEqualToString:hash]) { // hash校验
-                NSString *directory = [self jsDirectoryWithProjectVersion:entity.projectVersion patchVersion:entity.patchVersion];
+            if (hashCode && hash && [hashCode isEqualToString:hash]) { // check hash
+                NSString *directory = [self jsDirectoryWithProjectVersion:projectVersion patchVersion:strPatchVersion];
                 [[NSFileManager defaultManager] createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:NULL];
                 
                 ZipArchive *zip = [[ZipArchive alloc] init];
-                if ([zip UnzipOpenFile:patchZipPath]) {
+                if ([zip UnzipOpenFile:patchZipPath Password:_compressPassword]) {
                     if ([zip UnzipFileTo:directory overWrite:YES]) {
-                        [self setProjectVersion:entity.projectVersion];
-                        [self setPatchVersion:entity.patchVersion];
+                        [self setProjectVersion:projectVersion];
+                        [self setPatchVersion:patchVersion];
                         
                         if ([self checkNeedPatch]) {
                             [self realPatch];
@@ -234,8 +209,12 @@
     });
 }
 
+/**
+ *  real patch
+ */
 - (void)realPatch {
-    NSString *directory = [self jsDirectoryWithProjectVersion:_projectVersion patchVersion:_patchVersion];
+    NSString *strPatchVersion = [NSString stringWithFormat:@"%@", @(_patchVersion)];
+    NSString *directory = [self jsDirectoryWithProjectVersion:_projectVersion patchVersion:strPatchVersion];
     if (![[NSFileManager defaultManager] fileExistsAtPath:directory]) {
         return;
     }
@@ -251,6 +230,78 @@
     NSLog(@"=== end patch");
 }
 
+#pragma mark - file path
+
+/**
+ *  get document directory
+ *
+ *  @return document directory
+ */
+- (NSString *)documentDirectory {
+    return [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+}
+
+/**
+ *  compress/js
+ *
+ *  @return Document/patch/compress/js
+ */
+- (NSString *)compressJsDirectory {
+    NSString *documentDirectory = [self documentDirectory];
+    NSString *directory = [documentDirectory stringByAppendingPathComponent:@"patch"];
+    directory = [directory stringByAppendingPathComponent:@"compress"];
+    directory = [directory stringByAppendingPathComponent:@"js"];
+    return directory;
+}
+
+/**
+ *  compressed patch.zip
+ *
+ *  @return Document/patch/compress/patch.zip
+ */
+- (NSString *)compressZipPath {
+    NSString *documentDirectory = [self documentDirectory];
+    NSString *directory = [documentDirectory stringByAppendingPathComponent:@"patch"];
+    directory = [directory stringByAppendingPathComponent:@"compress"];
+    directory = [directory stringByAppendingPathComponent:@"patch.zip"];
+    return directory;
+}
+
+/**
+ *  patchVersion
+ *
+ *  @return Document/patch/projectVersion/patchVersion
+ */
+- (NSString *)patchDirectoryWithProjectVersion:(NSString *)projectVersion patchVersion:(NSString *)patchVersion {
+    NSString *documentDirectory = [self documentDirectory];
+    NSString *patchDirectory = [documentDirectory stringByAppendingPathComponent:@"patch"];
+    patchDirectory = [patchDirectory stringByAppendingPathComponent:projectVersion];
+    patchDirectory = [patchDirectory stringByAppendingPathComponent:patchVersion];
+    return patchDirectory;
+}
+
+/**
+ *  js
+ *
+ *  @return Document/patch/projectVersion/patchVersion/js
+ */
+- (NSString *)jsDirectoryWithProjectVersion:(NSString *)projectVersion patchVersion:(NSString *)patchVersion {
+    NSString *patchDirectory = [self patchDirectoryWithProjectVersion:projectVersion patchVersion:patchVersion];
+    NSString *luaDirectory = [patchDirectory stringByAppendingPathComponent:@"js"];
+    return luaDirectory;
+}
+
+/**
+ *  patch.zip
+ *
+ *  @return Document/patch/projectVersion/patchVersion/patch.zip
+ */
+- (NSString *)patchZipPathWithProjectVersion:(NSString *)projectVersion patchVersion:(NSString *)patchVersion {
+    NSString *patchDirectory = [self patchDirectoryWithProjectVersion:projectVersion patchVersion:patchVersion];
+    NSString *patchZipPath = [patchDirectory stringByAppendingPathComponent:@"patch.zip"];
+    return patchZipPath;
+}
+
 #pragma mark - setter
 
 - (void)setProjectVersion:(NSString *)projectVersion {
@@ -263,11 +314,8 @@
     _projectVersion = projectVersion;
 }
 
-- (void)setPatchVersion:(NSString *)patchVersion {
-    if (!patchVersion) {
-        return;
-    }
-    [[NSUserDefaults standardUserDefaults] setObject:patchVersion forKey:@"patchVersion"];
+- (void)setPatchVersion:(NSInteger)patchVersion {
+    [[NSUserDefaults standardUserDefaults] setInteger:patchVersion forKey:@"patchVersion"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     _patchVersion = patchVersion;

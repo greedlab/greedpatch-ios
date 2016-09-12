@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		28E247041D864CA000C69E97 /* GRPViewController.js in Resources */ = {isa = PBXBuildFile; fileRef = 28E247031D864CA000C69E97 /* GRPViewController.js */; };
 		28E952ED1CB3B522000A8172 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 28E952EC1CB3B522000A8172 /* LaunchScreen.storyboard */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
@@ -36,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		28E247031D864CA000C69E97 /* GRPViewController.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = GRPViewController.js; sourceTree = "<group>"; };
 		28E952EC1CB3B522000A8172 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		309A3C1A45E90A37D1F23561 /* Pods-greedpatch-ios_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-greedpatch-ios_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-greedpatch-ios_Tests/Pods-greedpatch-ios_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		4159A0F6CB9F2F9CFDA74AA8 /* libPods-greedpatch-ios_Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-greedpatch-ios_Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -137,6 +139,7 @@
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
 				28E952EC1CB3B522000A8172 /* LaunchScreen.storyboard */,
+				28E247031D864CA000C69E97 /* GRPViewController.js */,
 			);
 			name = "Example for greedpatch-ios";
 			path = "greedpatch-ios";
@@ -279,6 +282,7 @@
 				28E952ED1CB3B522000A8172 /* LaunchScreen.storyboard in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
+				28E247041D864CA000C69E97 /* GRPViewController.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -517,7 +521,7 @@
 				GCC_PREFIX_HEADER = "greedpatch-ios/greedpatch-ios-Prefix.pch";
 				INFOPLIST_FILE = "greedpatch-ios/greedpatch-ios-Info.plist";
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.POD-ORGANIZATION.greedpatch-ios-Example";
+				PRODUCT_BUNDLE_IDENTIFIER = com.greedlab.testpatch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -533,7 +537,7 @@
 				GCC_PREFIX_HEADER = "greedpatch-ios/greedpatch-ios-Prefix.pch";
 				INFOPLIST_FILE = "greedpatch-ios/greedpatch-ios-Info.plist";
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.POD-ORGANIZATION.greedpatch-ios-Example";
+				PRODUCT_BUNDLE_IDENTIFIER = com.greedlab.testpatch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
