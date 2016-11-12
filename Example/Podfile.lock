@@ -15,7 +15,7 @@ PODS:
   - AFNetworking/UIKit (3.1.0):
     - AFNetworking/NSURLSession
   - FileMD5Hash (2.0.0)
-  - greedpatch-ios (0.1.0):
+  - greedpatch-ios (0.1.1):
     - AFNetworking
     - FileMD5Hash
     - JSPatch
@@ -38,7 +38,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
   FileMD5Hash: 3ed69cc19a21ff4d30ae8833fc104275ad2c7de0
-  greedpatch-ios: 34d5185b0e89a87c396197fe55844f203a25cf29
+  greedpatch-ios: ee9071bee4aba7a208577676b7841ff619c27e31
   JSPatch: ade285ad1d8f06146ed6054a39cef87509453299
   ZipArchive: e25a4373192673e3229ac8d6e9f64a3e5713c966
 
