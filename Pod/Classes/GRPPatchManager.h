@@ -24,12 +24,12 @@
 /**
  *  the address of the hot patch server.
  *
- *  default: http://patchapi.greedlab.com.
+ *  default: https://patchapi.greedlab.com.
  */
 @property (nonatomic, strong, nonnull) NSString *serverAddress;
 
 /**
- *  Verify the user, get this from http://patch.greedlab.com/settings/my/tokens
+ *  Verify the user, get this from https://patch.greedlab.com/settings/my/tokens
  *
  *  default: null
  */

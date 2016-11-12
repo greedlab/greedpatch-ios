@@ -20,7 +20,7 @@
     [[GRPPatchManager sharedInstance] setCompressPassword:@"compress_password"];
     
     /**
-     *  0: release
+     *  0: patch and check whether need patch
      *
      *  1: test
      *
@@ -36,7 +36,7 @@
         // patch
         [[GRPPatchManager sharedInstance] patch];
         
-        // check need patch
+        // check whether need patch
         [[GRPPatchManager sharedInstance] requestPatch];
     }
     
