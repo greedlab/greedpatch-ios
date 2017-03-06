@@ -27,7 +27,7 @@
     if (self) {
         _projectVersion = [[NSUserDefaults standardUserDefaults] stringForKey:@"projectVersion"];
         _patchVersion = [[NSUserDefaults standardUserDefaults] integerForKey:@"patchVersion"];
-        _serverAddress = @"http://patchapi.greedlab.com";
+        _serverAddress = @"https://patchapi.greedlab.com";
     }
     return self;
 }

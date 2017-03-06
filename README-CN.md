@@ -4,28 +4,25 @@
 [![License](https://img.shields.io/cocoapods/l/greedpatch-ios.svg?style=flat)](http://cocoapods.org/pods/greedpatch-ios)
 [![Platform](https://img.shields.io/cocoapods/p/greedpatch-ios.svg?style=flat)](http://cocoapods.org/pods/greedpatch-ios)
 
-iOS SDK for [greedpatch](https://github.com/greedlab/greedpatch)
+[greedpatch](https://github.com/greedlab/greedpatch) 的 iOS SDK
 
-English | [中文](README-CN.md)
+[English](README.md) | 中文
 
-## Installation
-
-greedpatch-ios is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+## 安装
 
 ```ruby
 pod "greedpatch-ios"
 ```
 
-## Usage
+## 使用
 
-### Write patch files
+### 写补丁文件
 
-Write js files with [JSPatch](https://github.com/bang590/JSPatch) in your project.
+在工程中使用 [JSPatch](https://github.com/bang590/JSPatch) 写补丁 js 文件.
 
-### Config greedpatch
+### 配置 greedpatch
 
-config greedpatch like
+工程在加入类似如下的代码：
 
 ```
 [[GRPPatchManager sharedInstance] setProjectId:@"57d61489f0068561dce9baee"];
@@ -35,53 +32,51 @@ config greedpatch like
 
 #### ProjectId
 
-[greedpatch](http://patch.greedlab.com) > `Create project` > `Project Detail`. And then you can see `Project ID`
+[greedpatch](http://patch.greedlab.com) > `Create project` > `Project Detail`. 这样可以看到 `Project ID`
 
 #### Token
 
-visit [Generate new token](http://patch.greedlab.com/settings/my/tokens/new) to generate it.
+访问 [Generate new token](http://patch.greedlab.com/settings/my/tokens/new) 生成 Token
 
 #### compressPassword
 
-Used to encrypt you patch file.
+加解密补丁的密码
 
-### Test patch
+### 测试补丁
 
 ```
 [[GRPPatchManager sharedInstance] testPatch];
 ```
 
-test js files in your project
-
-### Compress patch
+### 打包补丁
 
 ```
 [[GRPPatchManager sharedInstance] compressPatch];
 ```
 
-Compress js files in your project to a zip file, and generate the hash code for the zip file. You can see them in Xcode's console.
+从 Xcode 终端可以看到`补丁路径` 和 `Hash`
 
-### upload patch
+### 上传补丁
 
-[greedpatch](http://patch.greedlab.com/) > select the project > click `Create patch` > upload zip file from the last step, click Upload > select the `project version` , input the hash from the last step  > Create
+[greedpatch](http://patch.greedlab.com/) > 先对应的工程 > `Create patch` > 填写好各种信息并上传补丁, 点击 `Upload` > `Create`
 
-### Patch
+### 打补丁
 
 ```
 [[GRPPatchManager sharedInstance] patch];
 ```
 
-If there are patch available for current project version,the patch will come into effect
+如果本地有适合于当前版本的补丁，就使补丁生效
 
-### Check need patch
+### 检查是否需要打补丁
 
 ```
 [[GRPPatchManager sharedInstance] requestPatch];
 ```
 
-request remote server whether there a new patch for current project version.
+向服务器请求是否需要打补丁
 
-## Demo
+## 例子
 
 [Example](https://github.com/greedlab/greedpatch-ios/tree/master/Example)
 

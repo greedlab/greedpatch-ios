@@ -1,6 +1,6 @@
 {
   "name": "greedpatch-ios",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "summary": "iOS SDK for greedpatch",
   "homepage": "https://github.com/greedlab/greedpatch-ios",
   "license": "MIT",
@@ -9,7 +9,7 @@
   },
   "source": {
     "git": "https://github.com/greedlab/greedpatch-ios.git",
-    "tag": "0.1.0"
+    "tag": "0.1.1"
   },
   "platforms": {
     "ios": "7.0"
