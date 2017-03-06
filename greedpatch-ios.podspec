@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "greedpatch-ios"
-  s.version          = "0.1.0"
+  s.version          = "0.1.1"
   s.summary          = "iOS SDK for greedpatch"
   s.homepage         = "https://github.com/greedlab/greedpatch-ios"
   s.license          = 'MIT'
@@ -29,5 +29,9 @@ Pod::Spec.new do |s|
   s.dependency 'FileMD5Hash'
   s.dependency 'JSPatch'
   s.dependency 'JSPatch/Extensions'
+  s.dependency 'JSPatch/JPCFunction'
+  s.dependency 'JSPatch/JPBlock'
+  s.dependency 'JSPatch/JPCFunctionBinder'
+  s.dependency 'JSPatch/Loader'
 
 end
