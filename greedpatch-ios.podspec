@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   s.frameworks = 'Foundation'
   s.dependency 'AFNetworking'
   s.frameworks = 'Foundation'
-#  s.dependency 'ZipArchive'
+  s.dependency 'ZipArchive'
   s.dependency 'FileMD5Hash'
   s.dependency 'JSPatch'
   s.dependency 'JSPatch/Extensions'
